@@ -91,12 +91,13 @@ class TestGetContextLimit:
         assert get_context_limit("ollama/llama3.3") == 128000
 
     def test_minimax_models_use_model_specific_limits(self):
+        assert get_context_limit("MiniMax-M3.1-Flash") == 1000000
         assert get_context_limit("MiniMax-M3") == 1000000
-        assert get_context_limit("MiniMax-M2.7") == 204800
 
     def test_minimax_limit_is_independent_of_adapter_prefix(self):
+        assert get_context_limit("custom/MiniMax-M3.1-Flash") == 1000000
         assert get_context_limit("custom/MiniMax-M3") == 1000000
-        assert get_context_limit("anthropic/MiniMax-M2.7") == 204800
+        assert get_context_limit("anthropic/MiniMax-M3") == 1000000
 
 
 # ── snip_old_tool_results ─────────────────────────────────────────────────

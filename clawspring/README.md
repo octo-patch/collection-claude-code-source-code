@@ -375,8 +375,8 @@ Claude Code is a powerful, production-grade AI coding assistant — but its sour
 | **Zhipu (GLM)** | `glm-4-flash` | 128k | Free tier available | `ZHIPU_API_KEY` |
 | **DeepSeek** | `deepseek-chat` | 64k | Strong coding | `DEEPSEEK_API_KEY` |
 | **DeepSeek** | `deepseek-reasoner` | 64k | Chain-of-thought reasoning | `DEEPSEEK_API_KEY` |
+| **MiniMax** | `MiniMax-M3.1-Flash` | 1M | Default; multimodal coding with tunable thinking depth | `MINIMAX_API_KEY` |
 | **MiniMax** | `MiniMax-M3` | 1M | Multimodal coding and long-context tasks | `MINIMAX_API_KEY` |
-| **MiniMax** | `MiniMax-M2.7` | 204.8k | Coding and agent workflows | `MINIMAX_API_KEY` |
 
 ### Open-Source (Local via Ollama)
 
@@ -546,13 +546,13 @@ clawspring --model deepseek/deepseek-reasoner
 
 ### MiniMax
 
-Get your API key at [platform.minimax.io](https://platform.minimax.io/docs). The built-in provider uses the global OpenAI-compatible endpoint by default.
+Get your API key at [platform.minimax.io](https://platform.minimax.io/docs). The built-in provider uses `MiniMax-M3.1-Flash` and the global OpenAI-compatible endpoint by default.
 
 ```bash
 export MINIMAX_API_KEY=...
 
+clawspring --model MiniMax-M3.1-Flash
 clawspring --model MiniMax-M3
-clawspring --model MiniMax-M2.7
 ```
 
 For the CN OpenAI-compatible endpoint, use the existing custom adapter:
@@ -561,7 +561,7 @@ For the CN OpenAI-compatible endpoint, use the existing custom adapter:
 export CUSTOM_API_KEY="$MINIMAX_API_KEY"
 export CUSTOM_BASE_URL=https://api.minimaxi.com/v1
 
-clawspring --model custom/MiniMax-M3
+clawspring --model custom/MiniMax-M3.1-Flash
 ```
 
 For the Anthropic-compatible protocol, use the existing Anthropic adapter with the Base URL ending in `/anthropic`:
@@ -570,11 +570,11 @@ For the Anthropic-compatible protocol, use the existing Anthropic adapter with t
 # Global
 export ANTHROPIC_API_KEY="$MINIMAX_API_KEY"
 export ANTHROPIC_BASE_URL=https://api.minimax.io/anthropic
-clawspring --model anthropic/MiniMax-M3
+clawspring --model anthropic/MiniMax-M3.1-Flash
 
 # CN
 export ANTHROPIC_BASE_URL=https://api.minimaxi.com/anthropic
-clawspring --model anthropic/MiniMax-M3
+clawspring --model anthropic/MiniMax-M3.1-Flash
 ```
 
 ---

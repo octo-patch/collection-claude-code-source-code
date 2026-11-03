@@ -22,9 +22,10 @@ def test_minimax_registry_and_detection():
     assert provider["type"] == "openai"
     assert provider["base_url"] == "https://api.minimax.io/v1"
     assert provider["anthropic_base_url"] == "https://api.minimax.io/anthropic"
-    assert provider["models"] == ["MiniMax-M3", "MiniMax-M2.7"]
+    assert provider["default_model"] == "MiniMax-M3.1-Flash"
+    assert provider["models"] == ["MiniMax-M3.1-Flash", "MiniMax-M3"]
+    assert detect_provider("MiniMax-M3.1-Flash") == "minimax"
     assert detect_provider("MiniMax-M3") == "minimax"
-    assert detect_provider("MiniMax-M2.7") == "minimax"
 
 
 def test_minimax_api_key_lookup(monkeypatch):
@@ -34,12 +35,18 @@ def test_minimax_api_key_lookup(monkeypatch):
 
 
 def test_minimax_model_capabilities():
+    flash = MODEL_METADATA["MiniMax-M3.1-Flash"]
+    assert flash["input_modalities"] == ["text", "image", "video"]
+    assert flash["thinking"] == ["adaptive"]
+    assert flash["thinking_required"] is True
+    assert flash["reasoning_efforts"] == [
+        "low", "medium", "high", "xhigh", "max",
+    ]
+    assert flash["default_reasoning_effort"] == "max"
     assert MODEL_METADATA["MiniMax-M3"]["input_modalities"] == [
         "text", "image", "video",
     ]
     assert MODEL_METADATA["MiniMax-M3"]["thinking"] == ["adaptive", "disabled"]
-    assert MODEL_METADATA["MiniMax-M2.7"]["input_modalities"] == ["text"]
-    assert MODEL_METADATA["MiniMax-M2.7"]["thinking"] == ["always_on"]
 
 
 def test_minimax_regional_endpoints():
@@ -60,19 +67,19 @@ def test_minimax_regional_endpoints():
 
 
 def test_minimax_cache_pricing_metadata():
+    flash_pricing = MODEL_METADATA["MiniMax-M3.1-Flash"]["pricing"]
     m3_pricing = MODEL_METADATA["MiniMax-M3"]["pricing"]
-    m27_pricing = MODEL_METADATA["MiniMax-M2.7"]["pricing"]
-    assert m3_pricing == {
-        "input": 0.6,
-        "output": 2.4,
-        "cache_read": 0.12,
+    assert flash_pricing == {
+        "input": 0.15,
+        "output": 0.6,
+        "cache_read": 0.015,
         "cache_write": None,
     }
-    assert m27_pricing == {
+    assert m3_pricing == {
         "input": 0.3,
         "output": 1.2,
         "cache_read": 0.06,
-        "cache_write": 0.375,
+        "cache_write": None,
     }
-    assert calc_cost("MiniMax-M3", 1000000, 1000000) == pytest.approx(3.0)
-    assert calc_cost("MiniMax-M2.7", 1000000, 1000000) == pytest.approx(1.5)
+    assert calc_cost("MiniMax-M3.1-Flash", 1000000, 1000000) == pytest.approx(0.75)
+    assert calc_cost("MiniMax-M3", 1000000, 1000000) == pytest.approx(1.5)

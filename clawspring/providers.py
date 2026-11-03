@@ -9,7 +9,7 @@ Supported providers:
   qwen       — Alibaba DashScope (qwen-max, qwen-plus, ...)
   zhipu      — Zhipu GLM (glm-4, glm-4-plus, ...)
   deepseek   — DeepSeek (deepseek-chat, deepseek-reasoner, ...)
-  minimax    — MiniMax (MiniMax-M3, MiniMax-M2.7)
+  minimax    — MiniMax (MiniMax-M3.1-Flash, MiniMax-M3)
   ollama     — Local Ollama (llama3.3, qwen2.5-coder, ...)
   lmstudio   — Local LM Studio (any loaded model)
   custom     — Any OpenAI-compatible endpoint
@@ -106,8 +106,9 @@ PROVIDERS: dict[str, dict] = {
         "base_url":   "https://api.minimax.io/v1",
         "anthropic_base_url": "https://api.minimax.io/anthropic",
         "context_limit": 1000000,
+        "default_model": "MiniMax-M3.1-Flash",
         "models": [
-            "MiniMax-M3", "MiniMax-M2.7",
+            "MiniMax-M3.1-Flash", "MiniMax-M3",
         ],
         "regional_endpoints": [
             {
@@ -155,26 +156,29 @@ PROVIDERS: dict[str, dict] = {
 # Per-model metadata for models whose capabilities or pricing do not fit the
 # provider-level defaults. Prices are in USD per million tokens.
 MODEL_METADATA = {
+    "MiniMax-M3.1-Flash": {
+        "context_limit": 1000000,
+        "input_modalities": ["text", "image", "video"],
+        "thinking": ["adaptive"],
+        "thinking_required": True,
+        "reasoning_efforts": ["low", "medium", "high", "xhigh", "max"],
+        "default_reasoning_effort": "max",
+        "pricing": {
+            "input": 0.15,
+            "output": 0.6,
+            "cache_read": 0.015,
+            "cache_write": None,
+        },
+    },
     "MiniMax-M3": {
         "context_limit": 1000000,
         "input_modalities": ["text", "image", "video"],
         "thinking": ["adaptive", "disabled"],
         "pricing": {
-            "input": 0.6,
-            "output": 2.4,
-            "cache_read": 0.12,
-            "cache_write": None,
-        },
-    },
-    "MiniMax-M2.7": {
-        "context_limit": 204800,
-        "input_modalities": ["text"],
-        "thinking": ["always_on"],
-        "pricing": {
             "input": 0.3,
             "output": 1.2,
             "cache_read": 0.06,
-            "cache_write": 0.375,
+            "cache_write": None,
         },
     },
 }
