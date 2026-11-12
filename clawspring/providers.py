@@ -124,6 +124,22 @@ PROVIDERS: dict[str, dict] = {
                 "docs_root": "https://platform.minimaxi.com/docs",
             },
         ],
+        "reasoning_effort_parameters_by_api": {
+            "anthropic_messages": "output_config.effort",
+            "openai_chat_completions": "reasoning_effort",
+        },
+        "official_sources": {
+            "models": "https://platform.minimax.io/docs/guides/models-intro.md",
+            "pricing": "https://platform.minimax.io/docs/pricing/overview.md",
+            "anthropic_messages": (
+                "https://platform.minimax.io/docs/api-reference/"
+                "text-chat-anthropic.md"
+            ),
+            "openai_chat_completions": (
+                "https://platform.minimax.io/docs/api-reference/"
+                "text-chat-openai.md"
+            ),
+        },
     },
     "ollama": {
         "type":       "ollama",
@@ -160,9 +176,14 @@ MODEL_METADATA = {
         "context_limit": 1000000,
         "input_modalities": ["text", "image", "video"],
         "thinking": ["adaptive"],
-        "thinking_required": True,
-        "reasoning_efforts": ["low", "medium", "high", "xhigh", "max"],
-        "default_reasoning_effort": "max",
+        "thinking_always_on": True,
+        "thinking_defaults_by_api": {
+            "anthropic_messages": "adaptive",
+            "openai_chat_completions": "adaptive",
+        },
+        "reasoning_effort": ["low", "medium", "high", "xhigh", "max"],
+        "reasoning_effort_default": "max",
+        "service_tier_supported": False,
         "pricing": {
             "input": 0.15,
             "output": 0.6,
@@ -174,11 +195,54 @@ MODEL_METADATA = {
         "context_limit": 1000000,
         "input_modalities": ["text", "image", "video"],
         "thinking": ["adaptive", "disabled"],
+        "thinking_always_on": False,
+        "thinking_defaults_by_api": {
+            "anthropic_messages": "disabled",
+            "openai_chat_completions": "adaptive",
+        },
+        "reasoning_effort": [],
+        "reasoning_effort_default": None,
+        "reasoning_effort_note": "Effort fields are ignored by MiniMax-M3.",
+        "service_tier_supported": True,
         "pricing": {
             "input": 0.3,
             "output": 1.2,
             "cache_read": 0.06,
             "cache_write": None,
+        },
+        "pricing_tiers": {
+            "selection_basis": "request_input_tokens",
+            "input_token_threshold": "512k",
+            "threshold_note": (
+                "Published threshold retained verbatim; the pricing page does "
+                "not specify its integer expansion."
+            ),
+            "default_service_tier": "standard",
+            "flat_price_baseline": "standard, input tokens <= 512k",
+            "standard": [
+                {
+                    "input_token_condition": "<=512k",
+                    "pricing": {
+                        "input": 0.3,
+                        "output": 1.2,
+                        "cache_read": 0.06,
+                        "cache_write": None,
+                    },
+                },
+                {
+                    "input_token_condition": ">512k",
+                    "pricing": {
+                        "input": 0.6,
+                        "output": 2.4,
+                        "cache_read": 0.12,
+                        "cache_write": None,
+                    },
+                },
+            ],
+            "priority_multiplier": 1.5,
+            "priority_multiplier_applies_to": [
+                "input", "output", "cache_read",
+            ],
         },
     },
 }
